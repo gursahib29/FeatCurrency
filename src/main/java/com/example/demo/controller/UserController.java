@@ -5,7 +5,7 @@ import java.util.Date;
 import javax.servlet.ServletException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +21,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 @RestController
-@RequestMapping("/users")
+//@RequestMapping("/users")
 public class UserController {
 	
 	@Autowired
@@ -34,18 +34,20 @@ public class UserController {
 			this.bCryptPasswordEncoder = bCryptPasswordEncoder;
 	}
 
-	@RequestMapping(value = "/sign-up",method = RequestMethod.POST)	
+	@RequestMapping(value = "/users/sign-up",method = RequestMethod.POST)
 	public String createUser(@RequestBody ApplicationUser user) {
 		user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 	    return userService.createUser(user);
 	}
 	
-	@RequestMapping("/getUser")
+	@Secured({"ROLE_ADMIN","ROLE_USER"})
+	@RequestMapping("/users/getUser")	
 	public String getUser() {
+		System.out.println("In get User:::::::::::::::::::");
 		return "welcome user";		
 	}
 	
-	@RequestMapping(value = "/login", method = RequestMethod.POST) 
+	@RequestMapping(value = "/users/login", method = RequestMethod.POST) 
 	public String login(@RequestBody ApplicationUser user) throws ServletException {		
 		String jwtToken = "";
 		if(user.getUsername() == null || user.getPassword() == null)
@@ -57,14 +59,14 @@ public class UserController {
 		
 		ApplicationUser applicationUser =  userRepository.findByUsername(username);
 		if(applicationUser == null) {
-			throw new ServletException("User email not found.");
+			throw new ServletException("User not found.");
 		}
 		String pwd = applicationUser.getPassword();
 		if(!bCryptPasswordEncoder.matches(password, pwd)) {
 			throw new ServletException("Invalid login. Please check your name and password.");
 		}
 		jwtToken = Jwts.builder()
-                .setSubject(username)
+                .setSubject(username).setSubject(applicationUser.getRole().toString())
                 .setExpiration(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
                 .signWith(SignatureAlgorithm.HS512, SecurityConstants.SECRET.getBytes())
                 .compact();

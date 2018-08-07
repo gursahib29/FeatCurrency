@@ -1,12 +1,14 @@
 package com.example.demo.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import com.example.demo.repository.UserRepository;
-import static java.util.Collections.emptyList;
 public class UserDetailsServiceImpl implements UserDetailsService {
 	
 	private UserRepository userRepository;
@@ -21,6 +23,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (User == null) {
             throw new UsernameNotFoundException(username);
         }
-        return new User(User.getUsername(), User.getPassword(), emptyList());
+        return new User(User.getUsername(), User.getPassword(), new ArrayList());
 	}
 }
