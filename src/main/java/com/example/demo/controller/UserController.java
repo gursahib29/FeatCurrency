@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -47,13 +48,13 @@ public class UserController {
 	
 	@Secured({"ROLE_ADMIN","ROLE_USER"})
 	@RequestMapping("/users/getUser")	
-	public String getUser() {
+	public String getUser(  @RequestHeader("Authorization") String accessToken ) {
 		return "welcome user";		
 	}
 	
 	@Secured({"ROLE_ADMIN","ROLE_USER"})
 	@RequestMapping("/users/getAllUsers")	
-	public ResponseEntity< List<ApplicationUser> > getAllUsers() {
+	public ResponseEntity< List<ApplicationUser> > getAllUsers( @RequestHeader("Authorization") String accessToken ) {
 		List<ApplicationUser> appUsersList = userService.getAllUsers();
 		return new ResponseEntity< List<ApplicationUser> >(appUsersList,HttpStatus.OK);		
 	}
