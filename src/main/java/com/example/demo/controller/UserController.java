@@ -1,10 +1,13 @@
 package com.example.demo.controller;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.ServletException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,12 +29,14 @@ public class UserController {
 	
 	@Autowired
 	UserService userService;
+	
 	@Autowired
 	UserRepository userRepository;
+	
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	
 	public UserController(BCryptPasswordEncoder bCryptPasswordEncoder) {
-			this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
 	}
 
 	@RequestMapping(value = "/users/sign-up",method = RequestMethod.POST)
@@ -43,8 +48,14 @@ public class UserController {
 	@Secured({"ROLE_ADMIN","ROLE_USER"})
 	@RequestMapping("/users/getUser")	
 	public String getUser() {
-		System.out.println("In get User:::::::::::::::::::");
 		return "welcome user";		
+	}
+	
+	@Secured({"ROLE_ADMIN","ROLE_USER"})
+	@RequestMapping("/users/getAllUsers")	
+	public ResponseEntity< List<ApplicationUser> > getAllUsers() {
+		List<ApplicationUser> appUsersList = userService.getAllUsers();
+		return new ResponseEntity< List<ApplicationUser> >(appUsersList,HttpStatus.OK);		
 	}
 	
 	@RequestMapping(value = "/users/login", method = RequestMethod.POST) 

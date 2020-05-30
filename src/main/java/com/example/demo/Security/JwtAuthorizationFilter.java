@@ -27,26 +27,22 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter{
 	}
 	
 	@Override
-    protected void doFilterInternal(HttpServletRequest req,
-                                    HttpServletResponse res,
-                                    FilterChain chain) throws IOException, ServletException {
-		System.out.println("in do filterrr internalllllll");
-        String header = req.getHeader(SecurityConstants.HEADER_STRING);
+	protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
+			throws IOException, ServletException {
+		String header = req.getHeader(SecurityConstants.HEADER_STRING);
 
-        if (header == null || !header.startsWith(SecurityConstants.TOKEN_PREFIX)) {
-        	System.out.println("headerrrr is nulll");
-            chain.doFilter(req, res);
-            return;
-        }
+		if (header == null || !header.startsWith(SecurityConstants.TOKEN_PREFIX)) {
+			chain.doFilter(req, res);
+			return;
+		}
 
-        UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
+		UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        chain.doFilter(req, res);
-    }
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+		chain.doFilter(req, res);
+	}
 
 	 private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
-	     System.out.println("IN UsernamePasswordAuthenticationToken.............");   
 		 String token = request.getHeader(SecurityConstants.HEADER_STRING);
 	        if (token != null) {
 	            // parse the token.
@@ -56,21 +52,13 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter{
 	                    .parseClaimsJws(token.replace(SecurityConstants.TOKEN_PREFIX, ""))
 	                    .getBody()
 	                    .getSubject();
-	            System.out.println("subject::::::::::::::::"+Jwts.parser()
-	                    .setSigningKey(SecurityConstants.SECRET.getBytes())
-	                    .parseClaimsJws(token.replace(SecurityConstants.TOKEN_PREFIX, ""))
-	                    .getBody()
-	                    .getSubject()+"fffffffffffffffffffff"+user);
 	           Long expDate= Jwts.parser()
                 .setSigningKey(SecurityConstants.SECRET.getBytes())
                 .parseClaimsJws(token.replace(SecurityConstants.TOKEN_PREFIX, "")).getBody().getExpiration().getTime();
 	            
-	           if(System.currentTimeMillis()< expDate)
-	        	   return null;
 	            String roles = "ROLE_"+user;
 	            
 	           List < GrantedAuthority> authorities = AuthorityUtils.commaSeparatedStringToAuthorityList(roles);
-	           System.out.println(authorities+"fffffffffffffffffffffffffffffffffffffff");
 	        
 	            if (user != null) {           	
 	                return new UsernamePasswordAuthenticationToken(user, null,authorities);

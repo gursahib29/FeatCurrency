@@ -2,43 +2,41 @@ package com.example.demo.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 @Entity
 //@Table(name = "User")
 public class ApplicationUser {
-	
+
 	@Id
 	@Column(name = "id")
-	@GeneratedValue(strategy=GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private long id;
-	
+
 	@Column(name = "fullname")
 	@NotNull
 	private String username;
-	
+
 	@NotNull
 	private String email;
-	
+
 	@NotNull
 	private long mobile;
-	
+
 	@NotNull
 	private String password;
 	private String country;
 	private String address;
-	
+
 	@Enumerated
 	Role roles;
-	
+
 	public ApplicationUser() {
-		
+
 	}
 
 	public ApplicationUser(long id, @NotNull String username, @NotNull String email, @NotNull long mobile,
@@ -124,7 +122,5 @@ public class ApplicationUser {
 	public void setAddress(String address) {
 		this.address = address;
 	}
-	
-	
-	
+
 }
