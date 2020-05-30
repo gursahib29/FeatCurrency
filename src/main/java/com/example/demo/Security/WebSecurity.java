@@ -31,6 +31,10 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 		  http.cors().and().csrf().disable().authorizeRequests() //
 		  .antMatchers(SecurityConstants.SIGN_UP_URL,"/users/login").permitAll()
+		  .antMatchers("/v2/api-docs", "/configuration/ui", "/images/**", "/static/**", "/swagger-resources",
+					"/configuration/security", "/swagger-ui.html", "/webjars/**", "/swagger.json",
+					"/swagger-resources/configuration/ui", "/new.html")
+			.permitAll()
 		  .anyRequest().authenticated() .and() .addFilter(new
 		  JwtAuthorizationFilter(authenticationManager())) // this disables session
 		 // creation on Spring Security
